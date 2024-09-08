@@ -46,6 +46,10 @@ app.post('/find-table', async (req, res) => {
   }
 });
 
+app.get('/find-table', (req, res) => {
+     res.status(200).json({ message: "GET request to /find-table is working" });
+   });
+
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
