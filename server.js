@@ -12,20 +12,41 @@ app.use(cors());
 // 루트 디렉토리 설정
 const rootDir = path.join(__dirname, '..');
 
-async function readTableInfo() {
+// 테이블 정보를 읽는 함수
+async function readTableInfo(name, phone) {
   try {
     const filePath = path.join(rootDir, 'table_info.txt');
     console.log('Attempting to read file:', filePath);
     const data = await fs.readFile(filePath, 'utf8');
-    // ... 나머지 코드는 그대로 유지
+    const tableData = JSON.parse(data);
+
+    // 여기서 name과 phone에 맞는 테이블 정보를 찾는 로직을 추가하세요
+    const table = tableData.find(entry => entry.name === name && entry.phone === phone);
+
+    if (!table) {
+      throw new Error('테이블 정보를 찾을 수 없습니다.');
+    }
+
+    return table;
   } catch (error) {
     console.error('Error reading table info:', error);
     throw new Error('Unable to read table information');
   }
 }
 
-// ... 나머지 라우트 및 서버 설정 코드
+// /find-table 라우트 추가
+app.post('/find-table', async (req, res) => {
+  const { name, phone } = req.body;
 
+  try {
+    const table = await readTableInfo(name, phone);
+    res.status(200).json({ table });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+});
+
+// 서버 실행
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
 });
