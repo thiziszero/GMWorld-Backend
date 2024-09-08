@@ -35,9 +35,27 @@ async function readTableInfo(name, phone) {
     return table;
   } catch (error) {
     console.error('Error reading table info:', error);
-    throw new Error('Unable to read table information');
+    if (error.code === 'ENOENT') {
+      throw new Error('테이블 정보 파일을 찾을 수 없습니다.');
+    }
+    throw new Error(`테이블 정보를 읽는 중 오류 발생: ${error.message}`);
   }
 }
+
+// GET /find-table 라우트 수정
+app.get('/find-table', async (req, res) => {
+  const { name, phone } = req.query;
+  if (!name || !phone) {
+    return res.status(200).json({ message: "GET request to /find-table is working" });
+  }
+  try {
+    const table = await readTableInfo(name, phone);
+    res.status(200).json({ table });
+  } catch (error) {
+    console.error('Error in /find-table route:', error);
+    res.status(404).json({ message: error.message, details: error.stack });
+  }
+});
 
 // POST /find-table 라우트 추가
 app.post('/find-table', async (req, res) => {
