@@ -5,11 +5,18 @@ const path = require('path');
 const app = express();
 const port = process.env.PORT || 4000;
 
+// CORS 설정
+app.use(cors({
+  origin: 'https://main--sorobon.netlify.app', // 프론트엔드 URL
+  methods: ['GET', 'POST'], // 허용할 HTTP 메서드
+  allowedHeaders: ['Content-Type'] // 허용할 헤더
+}));
+
+// JSON 파싱 설정
 app.use(express.json());
-app.use(cors());
 
 // 루트 디렉토리 설정
-const rootDir = path.join(__dirname, '..');
+const rootDir = path.join(__dirname, './');
 
 // 테이블 정보를 읽는 함수
 async function readTableInfo(name, phone) {
@@ -17,11 +24,15 @@ async function readTableInfo(name, phone) {
     const filePath = path.join(rootDir, 'table_info.txt');
     console.log('Attempting to read file:', filePath);
     const data = await fs.readFile(filePath, 'utf8');
+    console.log(data);
     
     // 파일 내용을 줄 단위로 나누고 각 줄을 파싱합니다.
     const lines = data.split('\n');
+    console.log(lines);
+
+    // 탭과 공백을 모두 처리할 수 있도록 수정된 부분
     const tableData = lines.map(line => {
-      const [name, phone, table] = line.split('\t');
+      const [name, phone, table] = line.split(/\s+/); // 탭과 공백 모두 처리
       return { name: name.trim(), phone: phone.trim(), table: table.trim() };
     });
 
@@ -57,31 +68,7 @@ app.get('/find-table', async (req, res) => {
   }
 });
 
-// POST /find-table 라우트 추가
-app.post('/find-table', async (req, res) => {
-  const { name, phone } = req.body;
-  try {
-    const table = await readTableInfo(name, phone);
-    res.status(200).json({ table });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-});
-
-// GET /find-table 라우트 추가
-app.get('/find-table', async (req, res) => {
-  const { name, phone } = req.query;
-  if (!name || !phone) {
-    return res.status(200).json({ message: "GET request to /find-table is working" });
-  }
-  try {
-    const table = await readTableInfo(name, phone);
-    res.status(200).json({ table });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-});
-
+// GET /tables 라우트 추가
 app.get('/tables', (req, res) => {
     res.json({ tables });
 });
