@@ -68,9 +68,22 @@ app.get('/find-table', async (req, res) => {
   }
 });
 
-// GET /tables 라우트 추가
-app.get('/tables', (req, res) => {
+app.get('/tables', async (req, res) => {
+  try {
+    console.log('Fetching tables...');
+    const filePath = path.join(rootDir, 'table_info.txt');
+    const data = await fs.readFile(filePath, 'utf8');
+    const lines = data.split('\n');
+    const tables = lines.map(line => {
+      const [name, phone, table] = line.split(/\s+/);
+      return { name: name.trim(), phone: phone.trim(), table: table.trim() };
+    });
+    console.log('Tables data:', tables);
     res.json({ tables });
+  } catch (error) {
+    console.error('Error in /tables route:', error);
+    res.status(500).json({ message: 'Internal Server Error', error: error.message });
+  }
 });
 
 // 서버 실행
