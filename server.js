@@ -24,20 +24,23 @@ async function readTableInfo(name, phone) {
     const filePath = path.join(rootDir, 'table_info.txt');
     console.log('Attempting to read file:', filePath);
     const data = await fs.readFile(filePath, 'utf8');
-    console.log(data);
+    console.log('File data:', data);
     
     // 파일 내용을 줄 단위로 나누고 각 줄을 파싱합니다.
     const lines = data.split('\n');
-    console.log(lines);
+    console.log('Parsed lines:', lines);
 
     // 탭과 공백을 모두 처리할 수 있도록 수정된 부분
     const tableData = lines.map(line => {
-      const [name, phone, table] = line.split(/\s+/); // 탭과 공백 모두 처리
-      return { name: name.trim(), phone: phone.trim(), table: table.trim() };
+      const [entryName, entryPhone, entryTable] = line.split(/\s+/); // 탭과 공백 모두 처리
+      return { name: entryName.trim(), phone: entryPhone.trim(), table: entryTable.trim() };
     });
 
-    // 입력받은 name과 phone에 맞는 테이블 정보를 찾습니다.
-    const table = tableData.find(entry => entry.name === name && entry.phone === phone);
+    // 전화번호에서 하이픈을 제거하고 비교
+    const sanitizedPhone = phone.replace(/-/g, '');
+    const table = tableData.find(entry => 
+      entry.name === name && entry.phone.replace(/-/g, '') === sanitizedPhone
+    );
     
     if (!table) {
       throw new Error('테이블 정보를 찾을 수 없습니다.');
@@ -57,10 +60,11 @@ async function readTableInfo(name, phone) {
 app.get('/find-table', async (req, res) => {
   const { name, phone } = req.query;
   if (!name || !phone) {
-    return res.status(200).json({ message: "GET request to /find-table is working" });
+    return res.status(200).json({ message: "GET request to /find-table is working, but no name or phone provided" });
   }
   try {
     const table = await readTableInfo(name, phone);
+    console.log('Request params - Name:', name, 'Phone:', phone);
     res.status(200).json({ table });
   } catch (error) {
     console.error('Error in /find-table route:', error);
