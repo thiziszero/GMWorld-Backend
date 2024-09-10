@@ -7,7 +7,7 @@ const port = process.env.PORT || 4000;
 
 // CORS 설정
 app.use(cors({
-  origin: 'https://main--sorobon.netlify.app', // 프론트엔드 URL
+  origin: ['https://main--sorobon.netlify.app', 'http://localhost:3000'], // 허용할 프론트엔드 URL 목록
   methods: ['GET', 'POST'], // 허용할 HTTP 메서드
   allowedHeaders: ['Content-Type'] // 허용할 헤더
 }));
