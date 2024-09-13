@@ -15,6 +15,8 @@ app.use(cors({
 // JSON 파싱 설정
 app.use(express.json());
 
+app.use(express.static(rootDir));
+
 // 루트 디렉토리 설정
 const rootDir = path.join(__dirname, './');
 
