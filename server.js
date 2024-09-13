@@ -24,13 +24,9 @@ app.use(express.static(rootDir));
 async function readTableInfo(name, phone) {
   try {
     const filePath = path.join(rootDir, 'table_info.txt');
-    console.log('Attempting to read file:', filePath);
     const data = await fs.readFile(filePath, 'utf8');
-    console.log('File data:', data);
     
-    // 파일 내용을 줄 단위로 나누고 각 줄을 파싱합니다.
     const lines = data.split('\n');
-    console.log('Parsed lines:', lines);
 
     // 탭과 공백을 모두 처리할 수 있도록 수정된 부분
     const tableData = lines.map(line => {
@@ -50,7 +46,6 @@ async function readTableInfo(name, phone) {
     
     return table;
   } catch (error) {
-    console.error('Error reading table info:', error);
     if (error.code === 'ENOENT') {
       throw new Error('테이블 정보 파일을 찾을 수 없습니다.');
     }
@@ -66,17 +61,14 @@ app.get('/find-table', async (req, res) => {
   }
   try {
     const table = await readTableInfo(name, phone);
-    console.log('Request params - Name:', name, 'Phone:', phone);
     res.status(200).json({ table });
   } catch (error) {
-    console.error('Error in /find-table route:', error);
     res.status(404).json({ message: error.message, details: error.stack });
   }
 });
 
 app.get('/tables', async (req, res) => {
   try {
-    console.log('Fetching tables...');
     const filePath = path.join(rootDir, 'table_info.txt');
     const data = await fs.readFile(filePath, 'utf8');
     const lines = data.split('\n');
@@ -84,10 +76,8 @@ app.get('/tables', async (req, res) => {
       const [name, phone, table] = line.split(/\s+/);
       return { name: name.trim(), phone: phone.trim(), table: table.trim() };
     });
-    console.log('Tables data:', tables);
     res.json({ tables });
   } catch (error) {
-    console.error('Error in /tables route:', error);
     res.status(500).json({ message: 'Internal Server Error', error: error.message });
   }
 });
