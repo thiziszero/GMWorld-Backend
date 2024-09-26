@@ -82,6 +82,10 @@ app.get('/tables', async (req, res) => {
   }
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ message: 'Server is healthy' });
+});
+
 // 서버 실행
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
