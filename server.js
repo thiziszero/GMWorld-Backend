@@ -3,7 +3,7 @@ const cors = require('cors');
 const fs = require('fs').promises;
 const path = require('path');
 const app = express();
-const port = process.env.PORT || 4000;
+const port = 80;
 
 // CORS 설정
 app.use(cors({
