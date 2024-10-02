@@ -6,7 +6,7 @@ const app = express();
 const port = 80;
 
 app.use(cors({
-  origin: ['https://main--sorobon.netlify.app', 'http://localhost:3000', 'https://sorobon.netlify.app'], // 허용할 URL 목록에 추가
+  origin: ['https://main--sorobon.netlify.app', 'http://localhost:3000', 'https://sorbon.netlify.app'], // 허용할 URL 목록에 추가
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
