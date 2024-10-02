@@ -5,11 +5,10 @@ const path = require('path');
 const app = express();
 const port = 80;
 
-// CORS 설정
 app.use(cors({
-  origin: ['https://main--sorobon.netlify.app', 'http://localhost:3000'], // 허용할 프론트엔드 URL 목록
-  methods: ['GET', 'POST'], // 허용할 HTTP 메서드
-  allowedHeaders: ['Content-Type'] // 허용할 헤더
+  origin: ['https://main--sorobon.netlify.app', 'http://localhost:3000', 'https://sorobon.netlify.app'], // 허용할 URL 목록에 추가
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type']
 }));
 
 // JSON 파싱 설정
